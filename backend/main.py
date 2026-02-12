@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 import database
 from dto import TestSchema
 from fastapi.middleware.cors import CORSMiddleware
+import models
+from typing import List
 
 app = FastAPI()
 
@@ -23,9 +25,21 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/", response_model=TestSchema)
+@app.get("/", response_model=List[TestSchema])
 def test_endpoint(db: Session = Depends(get_db)):
-    return {"id":1,"name":"test_name"}
+    items = db.query(models.Test).all()
+    return items
+
+@app.post("/",response_model=TestSchema)
+def test_postendpoint(item: TestSchema,db: Session = Depends(get_db)):
+    new_db_item = models.Test()
+    new_db_item.name = item.name
+
+    db.add(new_db_item)
+    db.commit()
+    db.refresh(new_db_item)
+
+    return new_db_item
     
 
 # def test_endpoint(db: Session = Depends(get_db))
