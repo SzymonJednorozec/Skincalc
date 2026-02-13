@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { testfetch,submitfetch } from "./services/api";
+import { testfetch,submitfetch, deleteItem } from "./services/api";
 import { testData } from "./types/items";
 
 export default function Home() {
@@ -32,12 +32,27 @@ export default function Home() {
     }
   };
 
+  const handleClick = async (id: number) => {
+    try{
+      await deleteItem(id)
+      setData((data) => data.filter((item) => item.id !== id));
+    }
+    catch(error){
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
         <div>
           {data && data.length > 0 ? (
             data.map((item)=> (
-                <li>{item.name}</li>
+                <li key={item.id}>
+                  <span>id:{item.id}  name:{item.name}</span>
+                  <button onClick={() => handleClick(item.id)} className="bg-red-500 hover:bg-blue-700 text-white font-bold py-1 px-1 rounded ml-2">
+                    x
+                  </button>
+                </li>
             ))
           ) : (
             <p>brak danych</p>

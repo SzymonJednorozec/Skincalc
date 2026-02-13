@@ -40,6 +40,14 @@ def test_postendpoint(item: TestSchema,db: Session = Depends(get_db)):
     db.refresh(new_db_item)
 
     return new_db_item
+
+@app.delete("/")
+def test_deleteendpoint(item_id: int,db: Session = Depends(get_db)):
+    item = db.query(models.Test).filter(models.Test.id==item_id).first()
+    if item:
+        db.delete(item)
+        db.commit()
+        return {"status": "success"}
     
 
 # def test_endpoint(db: Session = Depends(get_db))
