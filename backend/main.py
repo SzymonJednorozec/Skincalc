@@ -5,6 +5,8 @@ from dto import TestSchema
 from fastapi.middleware.cors import CORSMiddleware
 import models
 from typing import List
+from fastapi import Body
+
 
 app = FastAPI()
 
@@ -31,9 +33,9 @@ def test_endpoint(db: Session = Depends(get_db)):
     return items
 
 @app.post("/",response_model=TestSchema)
-def test_postendpoint(item: TestSchema,db: Session = Depends(get_db)):
+def test_postendpoint(item: str = Body(...),db: Session = Depends(get_db)):
     new_db_item = models.Test()
-    new_db_item.name = item.name
+    new_db_item.name = item
 
     db.add(new_db_item)
     db.commit()

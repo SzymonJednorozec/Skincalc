@@ -22,10 +22,19 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("skinName") as string;
+
+    if (!name){
+      return;
+    }
+
     try{
-      const newItem = await submitfetch(submitData);
-      setData((data) => (data ? [...data,newItem] : [newItem]));
-      setsubmitData({id: 0, name: ""})
+      const newItem = await submitfetch(name);
+      setData((prev) =>  [...prev,newItem]);
+
+      // setData((data) => (data ? [...data,newItem] : [newItem]));
+      // setsubmitData({id: 0, name: ""})
     }
     catch(error) {
       console.error("Error:", error);
@@ -44,6 +53,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+      
         <div>
           {data && data.length > 0 ? (
             data.map((item)=> (
@@ -59,7 +69,7 @@ export default function Home() {
           )}
         </div>
         <form onSubmit={handleSubmit}>
-          <input value={submitData?.name} onChange={(e) => setsubmitData({...submitData!,name: e.target.value})}/>
+          <input name="skinName"/>
           <button type="submit">Submit</button>
         </form>
 
