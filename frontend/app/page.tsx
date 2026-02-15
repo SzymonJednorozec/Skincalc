@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { testfetch,submitfetch, deleteItem } from "./services/api";
+import { testfetch,submitfetch, deleteItem,apiTestFetch } from "./services/api";
 import { testData } from "./types/items";
 
 export default function Home() {
@@ -51,6 +51,14 @@ export default function Home() {
     }
   };
 
+  const APITest = async () => {
+    try {
+      await apiTestFetch()
+    } catch(error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       
@@ -73,6 +81,9 @@ export default function Home() {
           <button type="submit">Submit</button>
         </form>
 
+        <button onClick={() => APITest()} className="bg-red-500 hover:bg-blue-700 text-white font-bold py-1 px-1 rounded ml-2">
+          api test
+        </button>
     </div>
     
   );

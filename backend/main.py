@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import models
 from typing import List
 from fastapi import Body
+from services.scanner import get_skinport_sales_history
+import asyncio
 
 
 app = FastAPI()
@@ -51,5 +53,8 @@ def test_deleteendpoint(item_id: int,db: Session = Depends(get_db)):
         db.commit()
         return {"status": "success"}
     
-
+@app.get("/api")
+async def test_api(db: Session = Depends(get_db)):
+    await get_skinport_sales_history()
+    
 # def test_endpoint(db: Session = Depends(get_db))

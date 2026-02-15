@@ -52,3 +52,11 @@ export async function deleteItem(id: number): Promise<boolean>{
     }
     return response.ok;
 }
+
+export async function apiTestFetch(): Promise<boolean> {
+    const response = await fetch('http://127.0.0.1:8000/api');
+    if (!response.ok){
+        throw new Error("Something went wrong durning api test")
+    }
+    return response.ok;
+}
