@@ -1,4 +1,5 @@
 import re
+from typing import List
 
 def clean_price(price_str: str, exchange_rate: float = 1.0) -> float:
     if not price_str or price_str == "N/A":
@@ -20,3 +21,13 @@ def clean_price(price_str: str, exchange_rate: float = 1.0) -> float:
 
     except ValueError:
         return 0.0
+
+def get_market_hash_chunks(names, chunk_size: int = 20):
+    chunks = []
+
+    for i in range(0, len(names), chunk_size):
+        chunk = names[i:i+chunk_size]
+        chunks.append(",".join(chunk))
+    
+    return chunks
+
