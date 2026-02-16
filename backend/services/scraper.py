@@ -95,7 +95,7 @@ def database_upsert(page_count: int, db: Session, market_name: str):
                 new_price = Prices(
                     item_id=db_item.id,
                     market_id=target_market.id,
-                    price=clean_price
+                    price=clean_price,
                     update_date=timestamp
                 )
                 db.add(new_price)
