@@ -1,12 +1,12 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 import database
-from dto import TestSchema
+from dto import TestSchema, item_row
 from fastapi.middleware.cors import CORSMiddleware
 from models import Prices, Items, Markets, ExchangeRate
 from typing import List
 from fastapi import Body
-from backend.services.external_api import get_skinport_sales_history,get_exchange_rate
+from services.external_api import get_skinport_sales_history,get_exchange_rate
 from services.utils import get_market_hash_chunks
 from services.crud import database_upsert
 from services.scraper import scrape_steam_market
@@ -85,7 +85,7 @@ async def sync_skinport_prices(db: Session = Depends(get_db)):
 
 @app.get("/api/scrape-steam")
 async def scrape_steam_items(db: Session = Depends(get_db)):
-    items_from_steam = await scrape_steam_market(5)
+    items_from_steam = await scrape_steam_market(3)
     if not items_from_steam:
         return {"message": "Scraper failure"}
     
@@ -93,7 +93,7 @@ async def scrape_steam_items(db: Session = Depends(get_db)):
         database_upsert(items_from_steam,db,"STEAM")
     except Exception as e:
         print({f"Unexpected error {e}"})
-    return {"message": "Items and steam prices upsertet succesfully"}
+    return {"message": "Items and steam prices upserted succesfully"}
 
 @app.get("/api/get-currency-ratio")
 async def get_currency_ratio(db: Session = Depends(get_db)):
@@ -115,4 +115,45 @@ async def get_currency_ratio(db: Session = Depends(get_db)):
         return {"message": "Database update failed"}
     
     return {"message": f"Currency ratio updated to {exchange_rate}"}
+
+@app.get("/api/get-items",response_model=List[item_row])
+def get_all_items(db: Session = Depends(get_db)):
+    steam_market = db.query(Markets).filter(Markets.name == "STEAM").first()
+    skinport_market = db.query(Markets).filter(Markets.name == "SKINPORT").first()
+    if not steam_market or not skinport_market:
+        return {"error": "Markets not seeded."}
+        
+    items = db.query(Items).all()
     
+    results = []
+    
+    for item in items:
+        steam_price_rec = db.query(Prices).filter(
+            Prices.item_id == item.id,
+            Prices.market_id == steam_market.id
+        ).first()
+
+        skinport_price_rec = db.query(Prices).join(Markets).filter(
+            Prices.item_id == item.id,
+            Prices.market_id == skinport_market.id
+        ).first()
+
+        if steam_price_rec and skinport_price_rec and steam_price_rec.price > 0:
+            
+            skinport_net = skinport_price_rec.price_after_fee
+            ratio = (skinport_net / steam_price_rec.price) * 100
+
+            results.append({
+                "name": item.name,
+                "image_url": item.image_url,
+                "steam_price": round(steam_price_rec.price, 2),
+                "steam_updated": steam_price_rec.update_date,
+                "skinport_price": round(skinport_price_rec.price, 2),
+                "sell_price_after_fee": round(skinport_net, 2),
+                "skinport_updated": skinport_price_rec.update_date,
+                "ratio_percentage": round(ratio, 2)
+            })
+
+    results.sort(key=lambda x: x["ratio_percentage"], reverse=True)
+
+    return results
