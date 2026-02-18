@@ -60,3 +60,67 @@ export async function apiTestFetch(): Promise<boolean> {
     }
     return response.ok;
 }
+
+export interface item_row {
+    name: string;
+    image_url: string | null;
+    steam_price: number;
+    steam_updated: string; 
+    skinport_price: number;
+    sell_price_after_fee: number;
+    skinport_updated: string;
+    ratio_percentage: number;
+}
+
+export async function getAllItems(): Promise<item_row[]>{
+    const response = await fetch("http://127.0.0.1:8000/api/get-items",
+        {
+            method: "GET",
+            headers: {"Accept": "application/json"}
+        }
+    );
+     if (!response.ok){
+        throw new Error("Something went wrong | getAllItems()");
+    }
+
+    const data: item_row[] = await response.json();
+    return data;
+}
+
+export async function updateCurrencyRatio(): Promise<string>{
+        const response = await fetch("http://127.0.0.1:8000/api/get-currency-ratio",
+        {
+            method: "GET",
+            headers: {"Accept": "application/json"},
+        }
+    );
+    if(!response.ok){
+        throw new Error("Something went wrong | updateCurrencyRatio()");
+    }
+    const data = await response.json();
+    return data.message;
+}
+
+export async function scrapeSteam(): Promise<string>{
+    const response = await fetch("http://127.0.0.1:8000/api/scrape-steam",{
+        method: "GET",
+        headers: {"Accept": "application/json"},
+    });
+    if(!response.ok){
+        throw new Error("Something went wrong | scrapeSteam()");
+    }
+    const data = await response.json();
+    return data.message;
+}
+
+export async function syncSkinport(): Promise<string>{
+    const response = await fetch("http://127.0.0.1:8000/api/sync-skinport",{
+        method: "GET",
+        headers: {"Accept": "application/json"},
+    });
+    if(!response.ok){
+        throw new Error("Something went wrong | syncSkinport()");
+    }
+    const data = await response.json();
+    return data.message;
+}
