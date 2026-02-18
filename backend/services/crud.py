@@ -1,7 +1,8 @@
 from models import Prices, Items, Markets, ExchangeRate
-import datetime
+from datetime import datetime
 from sqlalchemy.orm import Session
 from typing import List
+from services.utils import clean_price
 
 def database_upsert(item_list: List, db: Session, market_name: str):
 
@@ -36,15 +37,15 @@ def database_upsert(item_list: List, db: Session, market_name: str):
                 Prices.market_id == target_market.id
             ).first()
 
-            clean_price = clean_price(item_data["price"],currency_rate)
+            calculated_price = clean_price(item_data["price"],currency_rate)
 
             if db_price:
-                db_price.price = clean_price
+                db_price.price = calculated_price
             else:
                 new_price = Prices(
                     item_id=db_item.id,
                     market_id=target_market.id,
-                    price=clean_price,
+                    price=calculated_price,
                     update_date=timestamp
                 )
                 db.add(new_price)
