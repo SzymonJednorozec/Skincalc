@@ -4,63 +4,8 @@ import { testfetch,submitfetch, deleteItem,apiTestFetch, scrapeSteam, syncSkinpo
 import { testData } from "./types/items";
 
 export default function Home() {
-  // const [data, setData] = useState<testData[]>([]);
-  // const [submitData, setsubmitData] = useState<testData>({
-  //   id: 0,
-  //   name: ""
-  // });
-
   const [items, setItems] = useState<item_row[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const x = await testfetch();
-  //     setData(x);
-  //   }
-  //   fetchData();
-  // }, []);
-
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-    
-  //   const formData = new FormData(e.currentTarget);
-  //   const name = formData.get("skinName") as string;
-
-  //   if (!name){
-  //     return;
-  //   }
-
-  //   try{
-  //     const newItem = await submitfetch(name);
-  //     setData((prev) =>  [...prev,newItem]);
-
-  //     // setData((data) => (data ? [...data,newItem] : [newItem]));
-  //     // setsubmitData({id: 0, name: ""})
-  //   }
-  //   catch(error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
-
-  // const handleClick = async (id: number) => {
-  //   try{
-  //     await deleteItem(id)
-  //     setData((data) => data.filter((item) => item.id !== id));
-  //   }
-  //   catch(error){
-  //     console.error("Error:", error);
-  //   }
-  // };
-
-  // const APITest = async () => {
-  //   try {
-  //     await apiTestFetch()
-  //   } catch(error) {
-  //     console.error("Error:", error);
-  //   }
-  // };
 
   const ScrapeSteam = async () => {
     setIsLoading(true);
