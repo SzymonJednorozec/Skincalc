@@ -28,7 +28,7 @@ def database_upsert(item_list: List, db: Session, market_name: str):
                 db.add(db_item)
                 db.flush()  
             else:
-                if db_item.image_url != item_data['img_url']:
+                if db_item.image_url != item_data['img_url'] and item_data['img_url']!=None:
                     db_item.image_url = item_data['img_url']
 
 
