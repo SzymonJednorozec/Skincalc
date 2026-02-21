@@ -2,6 +2,8 @@ import httpx
 from bs4 import BeautifulSoup
 import time
 import asyncio
+import re
+from urllib.parse import quote
 
 headers = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
@@ -45,3 +47,24 @@ async def scrape_steam_market(page_count: int):
             
             await asyncio.sleep(2)
     return scraped_items_info
+
+async def scrape_single_item_steam(hash_name):
+    url_page = f"https://steamcommunity.com/market/listings/730/{quote(hash_name)}"
+    scraped_item_info = []
+    async with httpx.AsyncClient() as client:
+        r = await client.get(url_page)
+        match = re.search(r'Market_LoadOrderSpread\(\s*(\d+)\s*\)', r.text)
+        
+        if match:
+            item_id = match.group(1)
+        
+            api_url = f"https://steamcommunity.com/market/itemordershistogram?country=PL&language=polish&currency=6&item_nameid={item_id}"
+            api_res = await client.get(api_url)
+            data = api_res.json()
+            
+            if data.get("success") == 1:
+                lowest_sell = str(float(data.get('lowest_sell_order', 0)) / 100)
+                item_info = {"name": hash_name,"price": lowest_sell,"img_url": None}
+                scraped_item_info.append(item_info)
+                return scraped_item_info
+        return None
