@@ -8,8 +8,9 @@ from typing import List
 from fastapi import Body
 from services.external_api import get_skinport_sales_history,get_exchange_rate
 from services.utils import get_market_hash_chunks
-from services.crud import database_upsert
-from services.scraper import scrape_steam_market
+from services.crud import database_upsert, get_item_row
+from services.scraper import scrape_steam_market, scrape_single_item_steam
+from services.enums import Market
 import asyncio
 
 
@@ -157,3 +158,20 @@ def get_all_items(db: Session = Depends(get_db)):
     results.sort(key=lambda x: x["ratio_percentage"], reverse=True)
 
     return results
+
+@app.post("/api/update-item")
+async def update_item_row(hash_name:str = Body(...), db = Depends(get_db)):
+    item_steam = await scrape_single_item_steam(hash_name)
+    item_skinport = await get_skinport_sales_history(hash_name)
+    if not item_steam:
+        raise HTTPException(status_code=500, detail="Failure during scraping steam")
+    if not item_skinport:
+        raise HTTPException(status_code=500, detail="Failure during skinport sync")
+    
+    database_upsert(item_steam,db,"STEAM")
+    database_upsert(item_skinport,db,"SKINPORT")
+
+    row = get_item_row(hash_name,db)
+    return row
+
+    
