@@ -77,12 +77,21 @@ export default function Home() {
     }
   }
 
+  const SortItems = () => {
+    setItems((prev) => {
+      const sorted = [...prev].sort((a,b)=>b.ratio_percentage-a.ratio_percentage)
+      return sorted;
+    })
+  }
+
+
+
   // const GetItemsPage = (page_num) =>{
 
   // }
 
   return (
-  <main className="p-8 bg-[#032533] h-screen">
+  <main className="p-8 bg-[#032533] flex flex-col h-screen">
     <h1 className="mb-6 text-5xl font-bold text-[#94d2bd]">SkinCalc</h1>
     <div className="flex flex-row gap-3">
       <button className="rounded-3xl bg-[#bb3e03] px-4 py-2 text-white hover:bg-[#9b2226] disabled:bg-gray-400 transition-colors"
@@ -109,10 +118,16 @@ export default function Home() {
       >
         Refresh Table
       </button>
+      <button className="rounded-3xl bg-[#bb3e03] px-4 py-2 text-white hover:bg-[#9b2226] disabled:bg-gray-400 transition-colors"
+        onClick={SortItems}
+        disabled={isLoading}
+      >
+        Sort Items
+      </button>
     </div>
     <div className="mt-7 flex overflow-x-auto rounded-lg shadow-2xl">
       <table className="w-full border-collapse text-left">
-        <thead className="bg-[#531315] text-white">
+        <thead className="bg-[#531315] text-white sticky top-0">
           <tr>
             <th className="p-3">Name</th>
             <th className="p-3">Steam price</th>
@@ -125,7 +140,7 @@ export default function Home() {
         </thead>
         <tbody className="bg-[#001219]">
           {items.map((item)=>(
-            <tr key={item.name} onClick={()=>{UpdateItemRow(item.name)}} className="transition-colors border-b border-black hover:bg-[#531315] hover:border-5">
+            <tr key={item.name} onClick={()=>{UpdateItemRow(item.name)}} className="transition-colors border-b border-black hover:bg-[#531315] hover:border-3">
               <td className="items-center p-3 flex">
                 {item.image_url && <img src={item.image_url} alt="" className="w-15 h-15 object-contain mx-3"/>}
                 <span>{item.name}</span>

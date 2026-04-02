@@ -1,3 +1,4 @@
+import { json } from 'stream/consumers';
 import { testData } from './../types/items';
 
 
@@ -126,9 +127,11 @@ export async function syncSkinport(): Promise<string>{
 }
 
 export async function updateItemRow(hash_name: string): Promise<item_row>{
-    const response = await fetch(`http://127.0.0.1:8000/api/update-item/?hash_name=${hash_name}`,
+    const response = await fetch(`http://127.0.0.1:8000/api/update-item`,
         {
             method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(hash_name),
         }
     );
     if(!response.ok){
