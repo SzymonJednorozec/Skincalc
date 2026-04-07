@@ -34,16 +34,20 @@ SkinCalc is a full-stack analytical tool designed to monitor and identify price 
  
 ## ⚙️ Setup & Installation
  
- 
-### 1. Backend setup
+### 1. Install dependencies
+
+```bash
+pip install -e .
+```
+
+### 2. Backend setup
  
 ```bash
 cd backend
-pip install -r requirements.txt
 uvicorn main:app --reload
 ```
  
-### 2. Frontend setup
+### 3. Frontend setup
  
 ```bash
 cd frontend
