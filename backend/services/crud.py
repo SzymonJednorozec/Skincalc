@@ -1,9 +1,9 @@
-from models import Prices, Items, Markets, ExchangeRate
+from backend.models import Prices, Items, Markets, ExchangeRate
 from datetime import datetime
 from sqlalchemy.orm import Session
 from typing import List
-from services.utils import clean_price
-from services.enums import Market
+from backend.services.utils import clean_price
+from backend.services.enums import Market
 
 def database_upsert(item_list: List, db: Session, market_name: str):
 
