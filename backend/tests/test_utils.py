@@ -24,4 +24,6 @@ def test_hash_chunks():
     names = ['A','A','A','B','B','B','C','C']
     chunk_size = 3
     result = get_market_hash_chunks(names,chunk_size)
-    assert result[2] == "C,C" and result[1] == "B,B,B"
+    assert result[0] == "A,A,A"
+    assert result[1] == "B,B,B"
+    assert result[2] == "C,C"
