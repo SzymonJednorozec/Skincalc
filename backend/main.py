@@ -1,16 +1,16 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-import database
-from dto import TestSchema, item_row
+import backend.database
+from backend.dto import TestSchema, item_row
 from fastapi.middleware.cors import CORSMiddleware
-from models import Prices, Items, Markets, ExchangeRate
+from backend.models import Prices, Items, Markets, ExchangeRate
 from typing import List
 from fastapi import Body
-from services.external_api import get_skinport_sales_history,get_exchange_rate
-from services.utils import get_market_hash_chunks
-from services.crud import database_upsert, get_item_row
-from services.scraper import scrape_steam_market, scrape_single_item_steam
-from services.enums import Market
+from backend.services.external_api import get_skinport_sales_history,get_exchange_rate
+from backend.services.utils import get_market_hash_chunks
+from backend.services.crud import database_upsert, get_item_row
+from backend.services.scraper import scrape_steam_market, scrape_single_item_steam
+from backend.services.enums import Market
 import asyncio
 
 
@@ -24,10 +24,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-database.Base.metadata.create_all(bind=database.engine)
+backend.database.Base.metadata.create_all(bind=backend.database.engine)
 
 def get_db():
-    db = database.SessionLocal()
+    db = backend.database.SessionLocal()
     try:
         yield db
     finally:
