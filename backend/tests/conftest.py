@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker
-from backend.database import Base # Upewnij się, że ścieżka jest poprawna
+from backend.database import Base
 from backend.main import app, get_db
 
 @pytest.fixture(scope="function")
