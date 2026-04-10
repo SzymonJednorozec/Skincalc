@@ -1,7 +1,7 @@
 
-from backend.models import Items, Markets, Prices, ExchangeRate
-from backend.services.crud import database_upsert, get_item_row
-from backend.services.enums import Market as MarketEnum
+from models import Items, Markets, Prices, ExchangeRate
+from services.crud import database_upsert, get_item_row
+from services.enums import Market as MarketEnum
 
 
 def test_database_upsert_insert(db_session):

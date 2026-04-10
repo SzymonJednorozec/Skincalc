@@ -1,8 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, AsyncMock
-from backend.main import app, get_db
-from backend.models import Items, Markets, ExchangeRate, Prices
+from main import app, get_db
+from models import Items, Markets, ExchangeRate, Prices
 
 client = TestClient(app)
 
@@ -18,7 +18,7 @@ def test_scrape_steam_items_success(db_session):
     db_session.commit()
 
     mock_data = [{"name": "Case", "price": "10.00", "img_url": "url"}]
-    with patch("backend.main.scrape_steam_market", new_callable=AsyncMock) as mock_scrape:
+    with patch("main.scrape_steam_market", new_callable=AsyncMock) as mock_scrape:
         mock_scrape.return_value = mock_data
         response = client.get("/api/scrape-steam")
         
@@ -26,7 +26,7 @@ def test_scrape_steam_items_success(db_session):
     assert response.json()["message"] == "Items and steam prices upserted succesfully"
 
 def test_get_currency_ratio_success(db_session):
-    with patch("backend.main.get_exchange_rate", new_callable=AsyncMock) as mock_rate:
+    with patch("main.get_exchange_rate", new_callable=AsyncMock) as mock_rate:
         mock_rate.return_value = 4.25
         response = client.get("/api/get-currency-ratio")
     
@@ -61,8 +61,8 @@ def test_update_item_row_endpoint(db_session):
     db_session.add(ExchangeRate(name="USD", rate=1.0))
     db_session.commit()
 
-    with patch("backend.main.scrape_single_item_steam", new_callable=AsyncMock) as m_steam, \
-         patch("backend.main.get_skinport_sales_history", new_callable=AsyncMock) as m_port:
+    with patch("main.scrape_single_item_steam", new_callable=AsyncMock) as m_steam, \
+         patch("main.get_skinport_sales_history", new_callable=AsyncMock) as m_port:
         
         m_steam.return_value = [{"name": "AWP", "price": "100.0", "img_url": "url"}]
         m_port.return_value = [{"name": "AWP", "price": "100.0", "img_url": "url"}]
@@ -73,7 +73,7 @@ def test_update_item_row_endpoint(db_session):
     assert response.json()["name"] == "AWP"
 
 def test_get_currency_ratio_external_failure():
-    with patch("backend.main.get_exchange_rate", new_callable=AsyncMock) as mock_rate:
+    with patch("main.get_exchange_rate", new_callable=AsyncMock) as mock_rate:
         mock_rate.return_value = None
         response = client.get("/api/get-currency-ratio")
     

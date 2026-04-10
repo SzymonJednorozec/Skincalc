@@ -1,6 +1,6 @@
 import pytest
 
-from backend.services.utils import clean_price, get_market_hash_chunks
+from services.utils import clean_price, get_market_hash_chunks
 
 def test_clean_price_polish_format():
     price = "12,74zł"

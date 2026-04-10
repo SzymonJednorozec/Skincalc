@@ -1,8 +1,8 @@
 import pytest
 from sqlalchemy import create_engine, StaticPool
 from sqlalchemy.orm import sessionmaker
-from backend.database import Base
-from backend.main import app, get_db
+from database import Base
+from main import app, get_db
 
 @pytest.fixture(scope="function")
 def db_session():
