@@ -3,6 +3,7 @@
 SkinCalc is a full-stack analytical tool designed to monitor and identify price arbitrage opportunities between the **Steam Community Market** and **Skinport**. The application provides real time price comparisons for Counter-Strike 2 items, automatically calculating profit margins (**Ratio**) after accounting for platform fees and currency fluctuations.
  
 ---
+![](images/g1.gif)
  
 ## 🚀 Key Features
  
